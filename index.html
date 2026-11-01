@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ميدفين إنتليجنس - MEDFIN Intelligence | النظام المحاسبي للقطاع الطبي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <!-- Google Font: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- SheetJS (XLSX) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = { theme: { extend: {
+            fontFamily: { sans: ['IBM Plex Sans Arabic', 'sans-serif'] },
+            borderRadius: { lg: '6px', xl: '8px', '2xl': '10px' },
+            colors: {
+                slate: { 50:'#f4f6f5',100:'#eaeeed',200:'#dbe2e0',300:'#c3cdca',400:'#93a29e',500:'#6b7b77',600:'#4d5c58',700:'#364440',800:'#232f2c',900:'#14211f',950:'#0e1816' },
+                emerald: { 50:'#e9f4ee',100:'#d0e8da',200:'#a8d3bb',300:'#7bb9a0',400:'#4f9e80',500:'#2a8a5b',600:'#1f7a4d',700:'#176340',800:'#124f34',900:'#0d3b27' },
+                teal: { 50:'#e6f2f1',100:'#c8e3e0',200:'#a0cfca',300:'#6fb3ac',400:'#3f958d',500:'#1d7f77',600:'#0f5c55',700:'#0c4a45',800:'#093935',900:'#062a27' },
+                rose: { 50:'#fbeceb',100:'#f6d3d0',200:'#eeb2ad',300:'#e08a83',400:'#d0675e',500:'#c2453b',600:'#b0382f',700:'#922d26',800:'#74241f',900:'#5a1c18' },
+                amber: { 50:'#fbf3e2',100:'#f5e4bd',200:'#ecd08f',300:'#e0b862',400:'#d3a03a',500:'#c8891a',600:'#a86f10',700:'#8a590c',800:'#6e470a',900:'#553708' },
+                blue: { 50:'#e8f0f8',100:'#cfe0f0',200:'#a9c6e3',300:'#7fa6d0',400:'#5a8cbb',500:'#3b6ea5',600:'#2f5c8f',700:'#264b75',800:'#1d3a5c',900:'#162c46' }
+            } } } }
+    </script>
+    <style>
+        :root { --ink:#14211f; --line:#dbe2e0; --side:#0e1816; --pri:#0f5c55; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; background:#f4f6f5; display:grid; grid-template-columns:1fr 252px; grid-template-areas:"top side" "main side" "foot side"; grid-template-rows:auto 1fr auto; min-height:100vh; }
+        aside#sidebar { grid-area:side; background:var(--side); color:#c3cdca; position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 12px; z-index:60; }
+        header.topbar { grid-area:top; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40; padding:12px 24px; display:flex; align-items:center; gap:12px; }
+        main#printable-area { grid-area:main; padding:24px; min-width:0; max-width:1240px; width:100%; margin-inline:auto; }
+        footer { grid-area:foot; }
+        .brand { display:flex; align-items:center; gap:10px; padding:4px 8px 20px; }
+        .brand-mark { width:34px; height:34px; border-radius:8px; background:#1d7f77; color:#fff; display:grid; place-items:center; }
+        .nav-group { font-size:11px; color:#6b7b77; padding:16px 10px 6px; }
+        .nav-item { width:100%; display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:6px; font-size:13.5px; color:#c3cdca; text-align:right; border-inline-start:3px solid transparent; }
+        .ico { width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:-.125em; display:inline-block; }
+        .nav-item .ico { width:18px; height:18px; color:#6b7b77; }
+        .nav-item:hover { background:#18262a; color:#fff; }
+        .nav-item.active { background:#16302e; color:#fff; border-inline-start-color:#4f9e80; font-weight:600; } .nav-item.active .ico { color:#4f9e80; }
+        .btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:6px; font-size:13px; font-weight:500; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; }
+        .btn:hover { background:#f4f6f5; } .btn-pri { background:var(--pri); border-color:var(--pri); color:#fff; } .btn-pri:hover { background:#0c4a45; }
+        .kpi-strip { display:grid; grid-template-columns:repeat(4,1fr); background:#fff; border:1px solid var(--line); border-radius:10px; margin-bottom:20px; }
+        .kpi-cell { padding:16px 20px; border-inline-start:1px solid var(--line); } .kpi-cell:first-child { border-inline-start:0; }
+        .kpi-l { font-size:12.5px; color:#6b7b77; } .kpi-v { font-size:26px; font-weight:700; margin-top:6px; line-height:1.2; color:var(--ink); }
+        .kpi-v small { font-size:12px; font-weight:500; color:#6b7b77; margin-inline-start:4px; } .kpi-s { font-size:12px; margin-top:6px; font-weight:500; }
+        .t-pos { color:#1f7a4d; } .t-neg { color:#b0382f; } .t-warn { color:#a86f10; } .t-mute { color:#4d5c58; }
+        .insights { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 20px; }
+        .insights li { display:flex; gap:10px; align-items:flex-start; padding:7px 0; font-size:13.5px; line-height:1.7; border-top:1px solid #eaeeed; } .insights li:first-child { border-top:0; }
+        .dot { width:8px; height:8px; border-radius:50%; margin-top:9px; flex:none; }
+        .num { font-variant-numeric: tabular-nums; direction:ltr; unicode-bidi:plaintext; }
+        .shadow-sm { box-shadow:none !important; } .bg-white.rounded-2xl, .bg-white.rounded-xl { border-color:var(--line); }
+        table { border-collapse:collapse; } thead th { position:sticky; top:0; font-weight:600; font-size:12.5px; background:#eaeeed !important; color:#364440 !important; border-bottom:1px solid var(--line); }
+        tbody td { border-top:1px solid #eaeeed; } .rounded-r-lg,.rounded-l-lg { border-radius:0 !important; } table td, table th { white-space:nowrap; }
+        button:focus-visible, input:focus-visible { outline:2px solid #1d7f77; outline-offset:2px; }
+        #scrim { display:none; } #menu-btn { display:none; }
+        .custom-scrollbar::-webkit-scrollbar { width:6px; height:6px; } .custom-scrollbar::-webkit-scrollbar-thumb { background:#c3cdca; border-radius:4px; }
+        @media (max-width:1023px) {
+            body { grid-template-columns:1fr; grid-template-areas:"top" "main" "foot"; }
+            aside#sidebar { position:fixed; inset:0 0 0 auto; width:272px; transform:translateX(100%); transition:transform .2s; }
+            aside#sidebar.open { transform:none; } #scrim.open { display:block; position:fixed; inset:0; background:rgba(14,24,22,.5); z-index:55; }
+            #menu-btn { display:inline-flex; } header.topbar { padding:10px 14px; } main#printable-area { padding:14px; }
+            .kpi-strip { grid-template-columns:1fr 1fr; } .kpi-cell:nth-child(3) { border-inline-start:0; } .kpi-cell:nth-child(n+3) { border-top:1px solid var(--line); } .kpi-v { font-size:21px; }
+        }
+        @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+        @media print {
+            aside#sidebar, header.topbar, .no-print, #scrim { display:none !important; }
+            body { display:block; background:#fff !important; } main#printable-area { padding:8px; max-width:100%; }
+            .chart-box { max-height:280px !important; } table { font-size:11px !important; } th, td { border:1px solid #dbe2e0 !important; padding:5px 7px !important; }
+            .kpi-strip, .insights, .bg-white { break-inside:avoid; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-5 left-5 right-5 sm:right-auto sm:max-w-sm z-[70] flex flex-col gap-2 no-print"></div>
+
+    <aside id="sidebar" class="no-print" aria-label="التنقل الرئيسي">
+        <div class="brand"><div class="brand-mark"><i class="fa-solid fa-notes-medical"></i></div><div><div class="text-white font-bold text-[15px]">ميدفين إنتليجنس</div><div class="text-[11px] text-slate-400">التحليل المالي للمنشآت الطبية</div></div></div>
+        <nav><div class="nav-group">نظرة عامة</div><button class="nav-item tab-btn" id="tab-revenue" onclick="switchTab('revenue')"><i class="fa-solid fa-chart-line"></i><span>الإيرادات والأرباح</span></button><button class="nav-item tab-btn" id="tab-budget" onclick="switchTab('budget')"><i class="fa-solid fa-bullseye"></i><span>الموازنة والانحرافات</span></button><div class="nav-group">الذمم والأقسام</div><button class="nav-item tab-btn" id="tab-insurance" onclick="switchTab('insurance')"><i class="fa-solid fa-shield-halved"></i><span>مديونيات التأمين</span></button><button class="nav-item tab-btn" id="tab-departments" onclick="switchTab('departments')"><i class="fa-solid fa-user-doctor"></i><span>ربحية الأقسام</span></button><div class="nav-group">الحسابات</div><button class="nav-item tab-btn" id="tab-cashflow" onclick="switchTab('cashflow')"><i class="fa-solid fa-hand-holding-dollar"></i><span>حركة السيولة</span></button><button class="nav-item tab-btn" id="tab-trial" onclick="switchTab('trial')"><i class="fa-solid fa-scale-balanced"></i><span>ميزان المراجعة</span></button><button class="nav-item tab-btn" id="tab-ratios" onclick="switchTab('ratios')"><i class="fa-solid fa-calculator"></i><span>النسب المالية</span></button><button class="nav-item tab-btn" id="tab-statements" onclick="switchTab('statements')"><i class="fa-solid fa-receipt"></i><span>القوائم المالية</span></button><div class="nav-group">الرقابة والبيانات</div><button class="nav-item tab-btn" id="tab-audit" onclick="switchTab('audit')"><i class="fa-solid fa-circle-check"></i><span>التدقيق الآلي</span></button><button class="nav-item tab-btn" id="tab-database" onclick="switchTab('database')"><i class="fa-solid fa-database"></i><span>إدارة البيانات</span></button></nav>
+    </aside>
+    <div id="scrim" onclick="closeNav()"></div>
+    <header class="topbar no-print">
+        <button id="menu-btn" class="btn" onclick="openNav()" aria-label="القائمة"><i class="fa-solid fa-bars"></i></button>
+        <div class="min-w-0 flex-1"><h1 id="page-title" class="text-base sm:text-lg font-bold truncate">الإيرادات والأرباح</h1><p id="page-sub" class="text-xs text-slate-500 truncate"></p></div>
+        <span id="db-status-badge" class="hidden xl:inline-flex items-center gap-2 text-xs text-slate-500"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span id="db-status-text">محفوظ محلياً</span></span>
+        <label class="btn cursor-pointer"><i class="fa-solid fa-file-arrow-up text-slate-500"></i><span class="hidden sm:inline">استيراد إكسل</span><input type="file" id="excel-file-input" accept=".xlsx,.xls" class="hidden" onchange="importExcelData(event)"></label>
+        <button class="btn hidden md:inline-flex" onclick="exportStandardTemplate()"><i class="fa-solid fa-download text-slate-500"></i>القالب الموحد</button>
+        <button class="btn btn-pri" onclick="openPrintModal()"><i class="fa-solid fa-file-pdf"></i><span class="hidden sm:inline">تصدير PDF</span></button>
+    </header>
+
+    
+
+    <!-- Main Workspace Printable Area -->
+    <main id="printable-area" class="print-container">
+
+        <!-- Header Report Info for Print Only -->
+        <div class="hidden print:block mb-6 pb-4 border-b border-slate-300">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">تقرير الأداء المحاسبي والمالي الشامل</h1>
+                    <p class="text-sm text-slate-600">نظام ميدفين إنتليجنس - مستشفى / مجمع المجد الطبي التخصصي</p>
+                </div>
+                <div class="text-left text-xs text-slate-500">
+                    <p>تاريخ التصدير: <span id="print-date">2026-10-26</span></p>
+                    <p>الحالة: <span id="print-status">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Summary Metrics Cards Bar -->
+        <div id="kpi-root" class="kpi-strip"></div>
+
+        <!-- ==================== TAB 1: REVENUE & PROFIT ==================== -->
+        <section id="section-revenue" class="tab-content space-y-6"><div id="insights-root"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main Monthly Revenue Chart -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-emerald-600"></i>
+                            تحليل الإيرادات التراكمية (الفعلي مقابل المخطط والمصروفات)
+                        </h2>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">بالريال السعودي</span>
+                    </div>
+                    <div class="relative h-72 sm:h-80 w-full">
+                        <canvas id="chartRevenueMonthly"></canvas>
+                    </div>
+                </div>
+
+                <!-- Revenue Breakdown & Structure -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-pie-chart text-teal-600"></i>
+                            توزيع مصادر الإيرادات
+                        </h3>
+                        <div class="relative h-56 w-full flex items-center justify-center">
+                            <canvas id="chartRevenueSources"></canvas>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-100 pt-3 mt-2 text-xs text-slate-600 space-y-2">
+                        <div class="flex justify-between">
+                            <span>مرضى تأمين شركات:</span>
+                            <span class="font-bold text-slate-800">62%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>مرضى الدفع النقدي (Cash):</span>
+                            <span class="font-bold text-slate-800">28%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>عقود مؤسسات وبرامج طبية:</span>
+                            <span class="font-bold text-slate-800">10%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-budget" class="tab-content space-y-6 hidden"><div id="budget-root"></div></section>
+
+        <!-- ==================== TAB 2: INSURANCE AR AGING ==================== -->
+        <section id="section-insurance" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- AR Aging Table -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
+                        جدول اعمار مديونيات شركات التأمين (Insurance AR Aging)
+                    </h2>
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-xs sm:text-sm text-right">
+                            <thead class="bg-slate-100 text-slate-700 font-bold">
+                                <tr>
+                                    <th class="p-3 rounded-r-lg">جهة التأمين</th>
+                                    <th class="p-3">حالي (&lt;30 يوم)</th>
+                                    <th class="p-3">31-60 يوم</th>
+                                    <th class="p-3">61-90 يوم</th>
+                                    <th class="p-3 text-red-600">+90 يوم (حرج)</th>
+                                    <th class="p-3 rounded-l-lg">الإجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-insurance-body" class="divide-y divide-slate-100 font-medium">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- AR Aging Doughnut Chart -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-donut text-amber-500"></i>
+                        تصنيف مخاطر أعمار الديون
+                    </h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartARAging"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: DEPARTMENT PROFITABILITY ==================== -->
+        <section id="section-departments" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-hospital-user text-emerald-600"></i>
+                    تحليل ربحية الأقسام الطبية والتشغيلية (Profitability Matrix)
+                </h2>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-xs sm:text-sm text-right">
+                        <thead class="bg-slate-900 text-white font-bold">
+                            <tr>
+                                <th class="p-3 rounded-r-lg">القسم الطبي</th>
+                                <th class="p-3">الإيراد الإجمالي</th>
+                                <th class="p-3">التكاليف المباشرة</th>
+                                <th class="p-3">المصاريف غير المباشرة</th>
+                                <th class="p-3">صافي الربح</th>
+                                <th class="p-3 rounded-l-lg">هامش الربح %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-dept-body" class="divide-y divide-slate-100 font-medium">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Dept Chart -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-base font-bold text-slate-900 mb-4">مقارنة إيرادات وصافي أرباح الأقسام الطبية</h3>
+                <div class="relative h-72 w-full">
+                    <canvas id="chartDeptProfit"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: CASH FLOW ==================== -->
+        <section id="section-cashflow" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-money-bill-transfer text-blue-600"></i>
+                        شلال الحركة النقدية والتدفقات (Cash Flow Waterfall)
+                    </h2>
+                    <div class="relative h-80 w-full">
+                        <canvas id="chartCashFlow"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-base font-bold text-slate-900 mb-4">تفاصيل التغير في التدفق النقدي</h3>
+                    <div id="cashflow-list" class="space-y-3 text-xs sm:text-sm font-semibold">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 5: TRIAL BALANCE ==================== -->
+        <section id="section-trial" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced text-purple-600"></i>
+                        ميزان المراجعة بال أرصدة (Trial Balance)
+                    </h2>
+                    <input type="text" id="trial-search" onkeyup="filterTrialBalance()" placeholder="بحث باسم الحساب أو الكود..." class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 w-full sm:w-64 focus:outline-emerald-500">
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-xs sm:text-sm text-right">
+                        <thead class="bg-slate-100 text-slate-800 font-bold">
+                            <tr>
+                                <th class="p-3">رمز الحساب</th>
+                                <th class="p-3">اسم الحساب المحاسبي</th>
+                                <th class="p-3">مدين (SAR)</th>
+                                <th class="p-3">دائن (SAR)</th>
+                                <th class="p-3">الحالة والتوازنات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-trial-body" class="divide-y divide-slate-100 font-medium">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                        <tfoot class="bg-slate-900 text-white font-bold">
+                            <tr>
+                                <td colspan="2" class="p-3">الإجمالي العام لميزان المراجعة</td>
+                                <td id="trial-total-debit" class="p-3 text-emerald-400">0.00</td>
+                                <td id="trial-total-credit" class="p-3 text-emerald-400">0.00</td>
+                                <td id="trial-balance-status" class="p-3 text-emerald-300">متوازن ✓</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 6: FINANCIAL RATIOS ==================== -->
+        <section id="section-ratios" class="tab-content space-y-6 hidden"><div id="ratios-root"></div></section>
+
+        <!-- ==================== TAB 7: FINANCIAL STATEMENTS ==================== -->
+        <section id="section-statements" class="tab-content space-y-6 hidden"><div id="statements-root"></div></section>
+
+        <!-- ==================== TAB 8: AUDIT & LOGIC ENGINE ==================== -->
+        <section id="section-audit" class="tab-content space-y-6 hidden"><div id="audit-root"></div></section>
+
+        <!-- ==================== TAB 9: DATABASE MANAGEMENT ==================== -->
+        <section id="section-database" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-database text-amber-500"></i>
+                    إدارة قاعدة البيانات المحلية والحفظ الدائم (Persistent Storage Control)
+                </h2>
+                <p class="text-xs text-slate-500 mb-6">يستخدم النظام تقنية IndexedDB و LocalStorage لحفظ كافة العمليات والتعديلات محلية في متصفحك بشكل آمن دون تسريبها.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="saveCurrentStateToDB()" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 transition text-right">
+                        <i class="fa-solid fa-floppy-disk text-2xl text-emerald-600 mb-2 block"></i>
+                        <span class="font-bold text-sm block">حفظ البيانات الحالية فوراً</span>
+                        <span class="text-[11px] text-emerald-700">تحديث اللقطة المحفوظة في قاعدة بيانات المتصفح</span>
+                    </button>
+
+                    <button onclick="exportDBBackup()" class="p-4 rounded-xl border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900 transition text-right">
+                        <i class="fa-solid fa-file-export text-2xl text-blue-600 mb-2 block"></i>
+                        <span class="font-bold text-sm block">تصدير نسخة احتياطية (JSON)</span>
+                        <span class="text-[11px] text-blue-700">تنزيل ملف القاعدة لاستعادته في أي جهاز آخر</span>
+                    </button>
+
+                    <button onclick="clearSavedDatabase()" class="p-4 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-red-900 transition text-right">
+                        <i class="fa-solid fa-trash-can text-2xl text-red-600 mb-2 block"></i>
+                        <span class="font-bold text-sm block">مسح البيانات وإعادة الضبط</span>
+                        <span class="text-[11px] text-red-700">حذف قاعدة البيانات المحلية وإعادة تعيين القوالب الافتراضية</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for iOS Print / PDF Options -->
+    <div id="print-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-print text-emerald-600"></i>
+                    تصدير التقرير المحاسبي
+                </h3>
+                <button onclick="closePrintModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <p class="text-xs text-slate-600 mb-6">اختر الطريقة المناسبة لجهازك لتصدير التقرير المالي الحالي بصيغة PDF:</p>
+            
+            <div class="space-y-3">
+                <!-- Method 1: Safari Print (Recommended for iPhone) -->
+                <button onclick="triggerIOSPrint()" class="w-full p-3.5 rounded-xl border border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 flex items-center justify-between transition">
+                    <div class="text-right">
+                        <span class="font-bold text-sm block">طباعة / حفظ PDF (مخصص للايفون iOS)</span>
+                        <span class="text-[11px] text-emerald-700">يفتح نافذة النظام لتحديد "حفظ في الملفات" أو الطباعة</span>
+                    </div>
+                    <i class="fa-solid fa-apple text-xl text-emerald-700"></i>
+                </button>
+
+                <!-- Method 2: Direct PDF File Download -->
+                <button onclick="downloadDirectPDF()" class="w-full p-3.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 flex items-center justify-between transition">
+                    <div class="text-right">
+                        <span class="font-bold text-sm block">تحميل PDF مباشر (لأجهزة الكمبيوتر)</span>
+                        <span class="text-[11px] text-slate-500">توليد ملف PDF عبر محرك html2pdf</span>
+                    </div>
+                    <i class="fa-solid fa-download text-xl text-slate-600"></i>
+                </button>
+            </div>
+
+            <button onclick="closePrintModal()" class="w-full mt-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 border-t border-slate-100">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="no-print text-xs text-slate-500 py-4 px-6 border-t border-slate-200">ميدفين إنتليجنس · البيانات محفوظة في متصفحك فقط ولا تُرسل لأي جهة</footer>
+
+    <!-- JavaScript Application Core Logic -->
+    <script>
+
+        // ==================== INLINE ICONS ====================
+        const ICON_PATHS = {
+            chart: '<path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/>', shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+            user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>', cash: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5C9.5 8.5 10.6 8 12 8s2.5.6 2.5 1.6S13.3 11.5 12 11.8s-2.5.9-2.5 2 1.1 1.7 2.5 1.7 2.5-.5 2.5-1.5"/>',
+            scale: '<path d="M12 3v18M5 7h14M8 21h8"/><path d="M5 7l-3 7a3 3 0 006 0zM19 7l-3 7a3 3 0 006 0z"/>', calc: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+            receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>', check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+            db: '<path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+            menu: '<path d="M4 6h16M4 12h16M4 18h16"/>', pdf: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 13h6M10 17h6"/>', upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+            download: '<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>', warn: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+            clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+            trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/>', med: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>', target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'
+        };
+        const FA2ICON = { 'chart-line': 'chart', 'chart-column': 'chart', 'chart-pie': 'chart', 'pie-chart': 'chart', 'chart-donut': 'chart', 'shield-halved': 'shield', 'user-doctor': 'user', 'hospital-user': 'user', 'user-tie': 'user', 'hand-holding-dollar': 'cash', 'money-bill-transfer': 'cash', 'sack-dollar': 'cash', 'file-invoice-dollar': 'cash', 'vault': 'cash', 'scale-balanced': 'scale', 'calculator': 'calc', 'receipt': 'receipt', 'file-excel': 'receipt', 'circle-check': 'check', 'database': 'db', 'floppy-disk': 'db', 'bars': 'menu', 'file-pdf': 'pdf', 'print': 'pdf', 'apple': 'pdf', 'file-arrow-up': 'upload', 'file-export': 'upload', 'download': 'download', 'xmark': 'x', 'triangle-exclamation': 'warn', 'circle-exclamation': 'warn', 'clock-rotate-left': 'clock', 'gears': 'gear', 'robot': 'gear', 'trash-can': 'trash', 'notes-medical': 'med', 'bullseye': 'target' };
+        function hydrateIcons() {
+            document.querySelectorAll('i[class*="fa-"]').forEach(el => {
+                const cls = [...el.classList], name = cls.find(c => c.startsWith('fa-') && FA2ICON[c.slice(3)]);
+                if (!name) { el.remove(); return; }
+                el.outerHTML = `<svg class="ico ${cls.filter(c => !c.startsWith('fa-')).join(' ')}" viewBox="0 0 24 24" aria-hidden="true">${ICON_PATHS[FA2ICON[name.slice(3)]]}</svg>`;
+            });
+        }
+        let iconBusy = false;
+        new MutationObserver(() => { if (iconBusy) return; iconBusy = true; requestAnimationFrame(() => { hydrateIcons(); iconBusy = false; }); }).observe(document.body, { childList: true, subtree: true });
+        hydrateIcons();
+
+        // ==================== GLOBAL STATE & INITIAL DATA ====================
+        const DB_KEY = 'medfin_intelligence_db_v3';
+        
+        let appData = {
+            monthlyRevenue: [
+                { month: 'يناير', actual: 1400000, budget: 1300000, expense: 1330000, expBudget: 1300000 },
+                { month: 'فبراير', actual: 1550000, budget: 1400000, expense: 1370000, expBudget: 1340000 },
+                { month: 'مارس', actual: 1600000, budget: 1500000, expense: 1425000, expBudget: 1400000 },
+                { month: 'أبريل', actual: 1480000, budget: 1450000, expense: 1340000, expBudget: 1350000 },
+                { month: 'مايو', actual: 1620000, budget: 1550000, expense: 1470000, expBudget: 1430000 },
+                { month: 'يونيو', actual: 1700000, budget: 1600000, expense: 1540000, expBudget: 1500000 },
+                { month: 'يوليو', actual: 1580000, budget: 1500000, expense: 1410000, expBudget: 1420000 },
+                { month: 'أغسطس', actual: 1650000, budget: 1600000, expense: 1510000, expBudget: 1480000 },
+                { month: 'سبتمبر', actual: 1720000, budget: 1650000, expense: 1565000, expBudget: 1520000 },
+                { month: 'أكتوبر', actual: 1800000, budget: 1700000, expense: 1610000, expBudget: 1570000 },
+                { month: 'نوفمبر', actual: 1200000, budget: 1500000, expense: 1370000, expBudget: 1400000 },
+                { month: 'ديسمبر', actual: 1150000, budget: 1450000, expense: 1310000, expBudget: 1350000 }
+            ],
+            revenueSources: [
+                { name: 'شركات التأمين', amount: 11439000 },
+                { name: 'الدفع النقدي', amount: 5166000 },
+                { name: 'عقود مؤسسات', amount: 1845000 }
+            ],
+            insuranceAR: [
+                { provider: 'بوبا العربية (Bupa)', current: 1200000, m30: 450000, m60: 200000, m90: 50000 },
+                { provider: 'التعاونية للتأمين', current: 900000, m30: 380000, m60: 150000, m90: 0 },
+                { provider: 'ملاذ للتأمين', current: 600000, m30: 220000, m60: 90000, m90: 30000 },
+                { provider: 'ميدغلف (Medgulf)', current: 400000, m30: 180000, m60: 140000, m90: 900000 },
+                { provider: 'مرضى نقد متبقي', current: 150000, m30: 40000, m60: 20000, m90: 0 }
+            ],
+            departments: [
+                { name: 'الأسنان والتقويم', revenue: 4500000, directCost: 1800000, overhead: 700000, budget: 4300000 },
+                { name: 'الجلدية والليزر', revenue: 5200000, directCost: 1900000, overhead: 800000, budget: 5000000 },
+                { name: 'العظام والجراحة', revenue: 3800000, directCost: 1600000, overhead: 600000, budget: 3900000 },
+                { name: 'الأطفال والولادة', revenue: 2400000, directCost: 1100000, overhead: 400000, budget: 2300000 },
+                { name: 'المختبر والتحاليل', revenue: 1550000, directCost: 600000, overhead: 250000, budget: 1500000 },
+                { name: 'الأشعة والتصوير', revenue: 1000000, directCost: 380000, overhead: 150000, budget: 1050000 }
+            ],
+            cashflowSteps: [
+                { title: 'الرصيد النقدي أول الفترة', amount: 2500000, isPositive: true },
+                { title: 'تحصيلات المبيعات والتأمين', amount: 17800000, isPositive: true },
+                { title: 'صرف رواتب الكادر والموظفين', amount: -4200000, isPositive: false },
+                { title: 'سداد الموردين والمستلزمات', amount: -7380000, isPositive: false },
+                { title: 'إيجارات ومصاريف تشغيلية', amount: -2250000, isPositive: false },
+                { title: 'أصول ثابتة وتحديث أجهزة', amount: -2620000, isPositive: false }
+            ],
+            trialBalance: [
+                { code: '1101', name: 'الصندوق والحسابات البنكية', debit: 3850000, credit: 0 },
+                { code: '1201', name: 'ذمم التأمين والعملاء المدينة', debit: 6100000, credit: 0 },
+                { code: '1301', name: 'مخزون الأدوية والمستلزمات الطبية', debit: 1200000, credit: 0 },
+                { code: '1501', name: 'الأجهزة والمعدات الطبية الثابتة', debit: 15000000, credit: 0 },
+                { code: '2101', name: 'الموردين والدائنين التجارية', debit: 0, credit: 4100000 },
+                { code: '3101', name: 'رأس المال المباشر', debit: 0, credit: 15000000 },
+                { code: '3201', name: 'الأرباح المبقاة والمدورة', debit: 0, credit: 5850000 },
+                { code: '4101', name: 'إيرادات الخدمات الطبية والعلاجية', debit: 0, credit: 18450000 },
+                { code: '5101', name: 'تكلفة الأدوية والمستلزمات الطبية', debit: 7380000, credit: 0 },
+                { code: '5201', name: 'مصاريف الرواتب والبدلات الطبية', debit: 4200000, credit: 0 },
+                { code: '5301', name: 'مصاريف الإيجار والمنافع التشغيلية', debit: 2250000, credit: 0 },
+                { code: '5401', name: 'مصاريف استهلاك الأجهزة والمعدات', debit: 3420000, credit: 0 }
+            ]
+        };
+
+        let chartsObj = {};
+        const DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        (function seedOps() {
+            const occ = [.68, .70, .72, .69, .74, .78, .73, .75, .77, .80, .66, .64];
+            appData.operations = appData.monthlyRevenue.map((m, i) => {
+                const pd = Math.round(60 * DAYS[i] * occ[i]), sub = Math.round(m.actual * 0.62);
+                return { month: m.month, beds: 60, patientDays: pd, admissions: Math.round(pd / 3.4), visits: Math.round(m.actual / 260), claimsSubmitted: sub, claimsRejected: Math.round(sub * (0.05 + (i % 4) * 0.005)) };
+            });
+        })();
+        const DEFAULTS = JSON.parse(JSON.stringify(appData));
+
+        // ==================== DATABASE PERSISTENCE LOGIC ====================
+        function initDatabase() {
+            try {
+                const savedData = localStorage.getItem(DB_KEY);
+                if (savedData) {
+                    appData = Object.assign({}, DEFAULTS, JSON.parse(savedData));
+                    showToast('تم استعادة البيانات المحفوظة محلياً بنجاح ✓', 'success');
+                } else {
+                    saveCurrentStateToDB(true);
+                }
+            } catch (e) {
+                console.error("Local Database Error:", e);
+            }
+        }
+
+        function saveCurrentStateToDB(silent = false) {
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(appData));
+                const dbStatus = document.getElementById('db-status-text');
+                if (dbStatus) dbStatus.innerText = 'القاعدة محلياً: محفّظة (' + new Date().toLocaleTimeString('ar-EG') + ')';
+                if (!silent) showToast('تم حفظ حالة البيانات الحالية في المتصفح بنجاح! 💾', 'success');
+            } catch (e) {
+                showToast('خطأ أثناء حفظ البيانات محلياً', 'error');
+            }
+        }
+
+        function clearSavedDatabase() {
+            if (confirm('هل أنت تأكد من مسح البيانات المحفوظة وإعادة ضبط التطبيق للبيانات الافتراضية؟')) {
+                localStorage.removeItem(DB_KEY);
+                location.reload();
+            }
+        }
+
+        function exportDBBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "MEDFIN_Intelligence_DB_Backup.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        // ==================== RENDERERS & CHARTS ====================
+        // ==================== CALCULATION ENGINE (single source of truth) ====================
+        const sum = (arr, f) => arr.reduce((t, x) => t + f(x), 0);
+        const fmt = n => Math.round(n).toLocaleString('en-US');
+        const money = n => (n < 0 ? '(' + fmt(-n) + ')' : fmt(n)) + ' ر.س';
+        const pct = (a, b) => b ? (a / b) * 100 : 0;
+        const TOL = 0.5;
+
+        function calc() {
+            const tb = appData.trialBalance;
+            const bal = p => sum(tb.filter(r => String(r.code).startsWith(p)), r => r.debit - r.credit);
+            const c = {};
+            c.revenue = -bal('4'); c.cogs = bal('51'); c.payroll = bal('52'); c.opex = bal('53'); c.dep = bal('54');
+            c.gross = c.revenue - c.cogs; c.ebitda = c.gross - c.payroll - c.opex; c.net = c.ebitda - c.dep;
+            c.cash = bal('11'); c.ar = bal('12'); c.inv = bal('13');
+            c.ca = c.cash + c.ar + c.inv; c.assets = bal('1'); c.fa = c.assets - c.ca;
+            c.liab = -bal('2'); c.capital = -bal('31'); c.retained = -bal('32');
+            c.equity = -bal('3') + c.net; c.le = c.liab + c.equity;
+            c.totalDebit = sum(tb, r => r.debit); c.totalCredit = sum(tb, r => r.credit);
+            c.mRev = sum(appData.monthlyRevenue, m => m.actual); c.mBud = sum(appData.monthlyRevenue, m => m.budget); c.mExp = sum(appData.monthlyRevenue, m => m.expense);
+            c.arAge = sum(appData.insuranceAR, i => i.current + i.m30 + i.m60 + i.m90);
+            c.ar90 = sum(appData.insuranceAR, i => i.m90);
+            c.deptRev = sum(appData.departments, d => d.revenue);
+            c.deptNet = sum(appData.departments, d => d.revenue - d.directCost - d.overhead);
+            c.cfClose = sum(appData.cashflowSteps, s => s.amount);
+            c.dso = pct(c.ar, c.revenue) * 3.65;
+            c.currentRatio = c.liab ? c.ca / c.liab : 0; c.quick = c.liab ? (c.cash + c.ar) / c.liab : 0;
+            c.de = c.equity ? c.liab / c.equity : 0;
+            return c;
+        }
+
+        function auditChecks(c) {
+            const eq = (a, b) => Math.abs(a - b) <= TOL;
+            const worst = appData.insuranceAR.slice().sort((x, y) => y.m90 - x.m90)[0];
+            return [
+                { ok: eq(c.totalDebit, c.totalCredit), t: 'توازن ميزان المراجعة', d: `مدين ${fmt(c.totalDebit)} / دائن ${fmt(c.totalCredit)}` },
+                { ok: eq(c.assets, c.le), t: 'معادلة الميزانية', d: `الأصول ${fmt(c.assets)} / الالتزامات + الملكية ${fmt(c.le)}` },
+                { ok: eq(c.arAge, c.ar), t: 'مطابقة أعمار الديون مع الأستاذ', d: `الأعمار ${fmt(c.arAge)} / الأستاذ ${fmt(c.ar)}` },
+                { ok: eq(c.mRev, c.revenue), t: 'الإيرادات الشهرية = إيراد الميزان', d: `الشهري ${fmt(c.mRev)} / الميزان ${fmt(c.revenue)}` },
+                { ok: eq(c.mExp, c.cogs + c.payroll + c.opex + c.dep), t: 'المصروفات الشهرية = مصروفات الميزان', d: `الشهري ${fmt(c.mExp)} / الميزان ${fmt(c.cogs + c.payroll + c.opex + c.dep)}` },
+                { ok: eq(c.deptRev, c.revenue), t: 'إيرادات الأقسام = إيراد الميزان', d: `الأقسام ${fmt(c.deptRev)} / الميزان ${fmt(c.revenue)}` },
+                { ok: eq(sum(appData.revenueSources || [], x => x.amount), c.revenue), t: 'مصادر الإيراد = إيراد الميزان', d: `المصادر ${fmt(sum(appData.revenueSources || [], x => x.amount))} / الميزان ${fmt(c.revenue)}` },
+                { ok: eq(c.cfClose, c.cash), t: 'الرصيد النقدي الختامي = حساب الصندوق والبنوك', d: `التدفقات ${fmt(c.cfClose)} / الميزان ${fmt(c.cash)}` },
+                { ok: c.ar90 === 0, warn: true, t: 'ديون متأخرة أكثر من 90 يوماً', d: c.ar90 ? `${fmt(c.ar90)} ر.س (${pct(c.ar90, c.arAge).toFixed(1)}% من الديون) — الأعلى: ${esc(worst.provider)} ${fmt(worst.m90)}` : 'لا توجد' }
+            ];
+        }
+
+        function renderAll() {
+            const c = calc();
+            renderKPIs(c); renderInsights(c); renderInsuranceTable(c); renderDepartmentTable(c); renderCashflowList(c);
+            renderTrialBalanceTable(c); renderBudget(c); renderRatios(c); renderStatements(c); renderAudit(c); initCharts(c);
+        }
+
+        function renderKPIs(c) {
+            const mv = n => (n < 0 ? '(' + fmt(-n) + ')' : fmt(n)) + '<small>ر.س</small>';
+            const cell = (l, v, sub, t) => `<div class="kpi-cell"><div class="kpi-l">${l}</div><div class="kpi-v num">${v}</div><div class="kpi-s ${t}">${sub}</div></div>`;
+            const vb = pct(c.revenue - c.mBud, c.mBud);
+            document.getElementById('kpi-root').innerHTML =
+                cell('إيرادات السنة', mv(c.revenue), `${vb >= 0 ? 'أعلى' : 'أقل'} من المستهدف بـ ${Math.abs(vb).toFixed(1)}%`, vb >= 0 ? 't-pos' : 't-neg') +
+                cell('صافي الربح', mv(c.net), `هامش ${pct(c.net, c.revenue).toFixed(1)}% · قبل الإهلاك ${pct(c.ebitda, c.revenue).toFixed(1)}%`, c.net >= 0 ? 't-mute' : 't-neg') +
+                cell('ذمم التأمين والعملاء', mv(c.ar), `يستغرق تحصيلها ${Math.round(c.dso)} يوماً`, c.dso > 90 ? 't-neg' : c.dso > 60 ? 't-warn' : 't-pos') +
+                cell('الرصيد النقدي', mv(c.cash), `نسبة التداول ${c.currentRatio.toFixed(2)}`, c.currentRatio >= 1.5 ? 't-pos' : 't-warn');
+        }
+
+        function renderInsights(c) {
+            const mr = appData.monthlyRevenue, L = [];
+            const dp = appData.departments.map(d => ({ n: d.name, m: pct(d.revenue - d.directCost - d.overhead, d.revenue) })).sort((x, y) => y.m - x.m);
+            L.push(['t-mute', `الربح قبل الإهلاك ${pct(c.ebitda, c.revenue).toFixed(1)}% من الإيرادات، ويصبح ${pct(c.net, c.revenue).toFixed(1)}% بعد إهلاك ${fmt(c.dep)} ر.س.`]);
+            if (c.dso > 60) L.push([c.dso > 90 ? 't-neg' : 't-warn', `تحصيل الذمم يستغرق ${Math.round(c.dso)} يوماً في المتوسط، والمستوى المريح أقل من 60 يوماً.`]);
+            if (c.ar90 > 0) { const w = appData.insuranceAR.slice().sort((x, y) => y.m90 - x.m90)[0]; L.push(['t-warn', `${fmt(c.ar90)} ر.س متأخرة أكثر من 90 يوماً، أكبرها لدى ${esc(w.provider)} (${fmt(w.m90)}).`]); }
+            const below = mr.filter(m => m.actual < m.budget);
+            if (below.length) L.push(['t-warn', `${below.length} أشهر دون المستهدف: ${below.map(m => esc(m.month)).join('، ')}.`]);
+            const loss = mr.filter(m => m.actual < m.expense);
+            if (loss.length) L.push(['t-neg', `مصروفات تفوق الإيراد في: ${loss.map(m => esc(m.month)).join('، ')}.`]);
+            if (dp.length > 1) L.push(['t-pos', `أعلى قسم هامشاً: ${esc(dp[0].n)} (${dp[0].m.toFixed(1)}%)، وأدناها ${esc(dp[dp.length - 1].n)} (${dp[dp.length - 1].m.toFixed(1)}%).`]);
+            const bad = auditChecks(c).filter(x => !x.ok && !x.warn).length;
+            if (bad) L.push(['t-neg', `${bad} فحوصات تدقيق لا تتطابق. راجع تبويب التدقيق الآلي.`]);
+            const col = { 't-pos': '#1f7a4d', 't-neg': '#b0382f', 't-warn': '#c8891a', 't-mute': '#93a29e' };
+            document.getElementById('insights-root').innerHTML = `<div class="insights"><h2 class="font-bold text-[15px] mb-1">ما يستحق الانتباه</h2><ul>${L.map(x => `<li><span class="dot" style="background:${col[x[0]]}"></span><span>${x[1]}</span></li>`).join('')}</ul></div>`;
+        }
+
+        function renderInsuranceTable(c) {
+            const tb = document.getElementById('table-insurance-body');
+            tb.innerHTML = appData.insuranceAR.map(i => {
+                const t = i.current + i.m30 + i.m60 + i.m90, risk = pct(i.m90, t) > 25;
+                return `<tr class="hover:bg-slate-50 ${risk ? 'bg-rose-50/60' : ''}"><td class="p-3 font-bold">${esc(i.provider)}${risk ? ' <span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">خطر</span>' : ''}</td><td class="p-3 num text-emerald-700">${fmt(i.current)}</td><td class="p-3 num">${fmt(i.m30)}</td><td class="p-3 num text-amber-700">${fmt(i.m60)}</td><td class="p-3 num text-rose-600 font-bold">${fmt(i.m90)}</td><td class="p-3 num font-extrabold">${fmt(t)}</td></tr>`;
+            }).join('') + `<tr class="bg-slate-900 text-white font-bold"><td class="p-3">الإجمالي</td>${['current', 'm30', 'm60', 'm90'].map(k => `<td class="p-3 num">${fmt(sum(appData.insuranceAR, i => i[k]))}</td>`).join('')}<td class="p-3 num">${fmt(c.arAge)}</td></tr>`;
+        }
+
+        function renderDepartmentTable(c) {
+            const rows = appData.departments.map(d => {
+                const n = d.revenue - d.directCost - d.overhead, m = pct(n, d.revenue);
+                const cls = m >= 20 ? 'bg-emerald-100 text-emerald-800' : m >= 10 ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800';
+                return `<tr class="hover:bg-slate-50"><td class="p-3 font-bold">${esc(d.name)}</td><td class="p-3 num">${fmt(d.revenue)}</td><td class="p-3 num text-rose-600">(${fmt(d.directCost)})</td><td class="p-3 num text-slate-500">(${fmt(d.overhead)})</td><td class="p-3 num font-bold ${n >= 0 ? 'text-emerald-600' : 'text-rose-600'}">${fmt(n)}</td><td class="p-3"><span class="num px-2 py-0.5 rounded font-bold ${cls}">${m.toFixed(1)}%</span></td></tr>`;
+            }).join('');
+            const un = c.deptNet - c.net;
+            document.getElementById('table-dept-body').innerHTML = rows +
+                `<tr class="bg-slate-100 font-bold"><td class="p-3">إجمالي الأقسام</td><td class="p-3 num">${fmt(c.deptRev)}</td><td class="p-3 num">(${fmt(sum(appData.departments, d => d.directCost))})</td><td class="p-3 num">(${fmt(sum(appData.departments, d => d.overhead))})</td><td class="p-3 num">${fmt(c.deptNet)}</td><td class="p-3 num">${pct(c.deptNet, c.deptRev).toFixed(1)}%</td></tr>` +
+                `<tr class="text-slate-600"><td class="p-3" colspan="4">يطرح: تكاليف غير موزعة على الأقسام (رواتب/إيجارات/إهلاك)</td><td class="p-3 num text-rose-600">(${fmt(un)})</td><td></td></tr>` +
+                `<tr class="bg-slate-900 text-white font-extrabold"><td class="p-3" colspan="4">صافي ربح المنشأة (مطابق للميزان)</td><td class="p-3 num">${fmt(c.net)}</td><td class="p-3 num">${pct(c.net, c.revenue).toFixed(1)}%</td></tr>`;
+        }
+
+        function renderCashflowList(c) {
+            const st = appData.cashflowSteps, ok = Math.abs(c.cfClose - c.cash) <= TOL;
+            document.getElementById('cashflow-list').innerHTML = st.map(s => `<div class="p-3 rounded-xl border border-slate-200 flex justify-between items-center ${s.amount >= 0 ? 'bg-emerald-50/40' : 'bg-rose-50/40'}"><span>${esc(s.title)}</span><span class="num font-extrabold ${s.amount >= 0 ? 'text-emerald-700' : 'text-rose-600'}">${s.amount > 0 ? '+' : ''}${fmt(s.amount)}</span></div>`).join('') +
+                `<div class="p-3 rounded-xl bg-slate-900 text-white flex justify-between items-center"><span>الرصيد النقدي الختامي</span><span class="num font-extrabold">${fmt(c.cfClose)}</span></div>
+                 <div class="text-[11px] ${ok ? 'text-emerald-600' : 'text-rose-600'}">${ok ? '✓ مطابق لحساب الصندوق والبنوك في الميزان' : '⚠ يختلف عن الميزان (' + fmt(c.cash) + ')'}</div>`;
+        }
+
+        function renderTrialBalanceTable(c) {
+            document.getElementById('table-trial-body').innerHTML = appData.trialBalance.map(i => `<tr class="hover:bg-slate-50"><td class="p-3 font-mono text-slate-500">${esc(i.code)}</td><td class="p-3 font-bold">${esc(i.name)}</td><td class="p-3 num text-emerald-700">${i.debit > 0 ? fmt(i.debit) : '-'}</td><td class="p-3 num text-blue-700">${i.credit > 0 ? fmt(i.credit) : '-'}</td><td class="p-3"><span class="text-[11px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">${i.debit > 0 ? 'مدين' : 'دائن'}</span></td></tr>`).join('');
+            document.getElementById('trial-total-debit').innerText = fmt(c.totalDebit);
+            document.getElementById('trial-total-credit').innerText = fmt(c.totalCredit);
+            const ok = Math.abs(c.totalDebit - c.totalCredit) <= TOL, el = document.getElementById('trial-balance-status');
+            el.innerText = ok ? 'متوازن ✓' : 'غير متوازن، الفرق ' + fmt(Math.abs(c.totalDebit - c.totalCredit));
+            el.className = 'p-3 ' + (ok ? 'text-emerald-300' : 'text-rose-300');
+            document.getElementById('trial-search').value = '';
+        }
+
+        function renderBudget(c) {
+            const mr = appData.monthlyRevenue;
+            const eb = sum(mr, m => m.expBudget || 0), netAct = c.mRev - c.mExp, netBud = c.mBud - eb;
+            const cls = (v, isExp) => (isExp ? v <= 0 : v >= 0) ? 't-pos' : 't-neg';
+            const sg = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v));
+            const box = (l, a, b, isExp) => { const v = a - b; return `<div class="kpi-cell"><div class="kpi-l">${l}</div><div class="kpi-v num">${fmt(a)}<small>فعلي</small></div><div class="kpi-s ${cls(v, isExp)}">المستهدف ${fmt(b)} · ${sg(v)} (${(b ? v / b * 100 : 0).toFixed(1)}%)</div></div>`; };
+            const row = m => { const rv = m.actual - m.budget, ev = m.expense - (m.expBudget || 0), n = m.actual - m.expense, nb = m.budget - (m.expBudget || 0);
+                return `<tr class="hover:bg-slate-50"><td class="p-3 font-bold">${esc(m.month)}</td><td class="p-3 num">${fmt(m.actual)}</td><td class="p-3 num">${fmt(m.budget)}</td><td class="p-3 num ${cls(rv)}">${sg(rv)}</td><td class="p-3 num">${fmt(m.expense)}</td><td class="p-3 num">${fmt(m.expBudget || 0)}</td><td class="p-3 num ${cls(ev, 1)}">${sg(ev)}</td><td class="p-3 num font-bold">${fmt(n)}</td><td class="p-3 num">${fmt(nb)}</td><td class="p-3 num font-bold ${cls(n - nb)}">${sg(n - nb)}</td></tr>`; };
+            const tot = `<tr class="bg-slate-900 text-white font-bold"><td class="p-3">الإجمالي</td><td class="p-3 num">${fmt(c.mRev)}</td><td class="p-3 num">${fmt(c.mBud)}</td><td class="p-3 num">${sg(c.mRev - c.mBud)}</td><td class="p-3 num">${fmt(c.mExp)}</td><td class="p-3 num">${fmt(eb)}</td><td class="p-3 num">${sg(c.mExp - eb)}</td><td class="p-3 num">${fmt(netAct)}</td><td class="p-3 num">${fmt(netBud)}</td><td class="p-3 num">${sg(netAct - netBud)}</td></tr>`;
+            const drow = d => { const v = d.revenue - (d.budget || 0); return `<tr class="hover:bg-slate-50"><td class="p-3 font-bold">${esc(d.name)}</td><td class="p-3 num">${fmt(d.budget || 0)}</td><td class="p-3 num">${fmt(d.revenue)}</td><td class="p-3 num ${cls(v)}">${sg(v)}</td><td class="p-3 num ${cls(v)}">${(d.budget ? v / d.budget * 100 : 0).toFixed(1)}%</td></tr>`; };
+            const th = a => `<thead><tr>${a.map(x => `<th class="p-3">${x}</th>`).join('')}</tr></thead>`;
+            document.getElementById('budget-root').innerHTML = `
+              <div class="kpi-strip" style="grid-template-columns:repeat(3,1fr)">${box('الإيرادات', c.mRev, c.mBud, 0)}${box('المصروفات', c.mExp, eb, 1)}${box('صافي الربح', netAct, netBud, 0)}</div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200"><h3 class="font-bold text-[15px] mb-1">الانحراف الشهري</h3><p class="text-xs text-slate-500 mb-3">الأعمدة فوق الصفر في صالح الربح (إيراد أعلى أو مصروف أقل من المستهدف)</p><div class="relative h-64"><canvas id="chartBudgetVar"></canvas></div></div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200"><h3 class="font-bold text-[15px] mb-1">صافي الربح التراكمي</h3><p class="text-xs text-slate-500 mb-3">الفعلي مقابل المستهدف منذ بداية السنة</p><div class="relative h-64"><canvas id="chartBudgetCum"></canvas></div></div>
+              </div>
+              <div class="bg-white p-5 rounded-2xl border border-slate-200"><h3 class="font-bold text-[15px] mb-3">الموازنة الشهرية (ر.س)</h3><div class="overflow-x-auto custom-scrollbar"><table class="w-full text-xs sm:text-sm text-right">${th(['الشهر', 'إيراد فعلي', 'إيراد مستهدف', 'انحراف الإيراد', 'مصروف فعلي', 'مصروف مستهدف', 'انحراف المصروف', 'صافي فعلي', 'صافي مستهدف', 'انحراف الصافي'])}<tbody>${mr.map(row).join('')}${tot}</tbody></table></div></div>
+              <div class="bg-white p-5 rounded-2xl border border-slate-200"><h3 class="font-bold text-[15px] mb-3">موازنة إيرادات الأقسام</h3><div class="overflow-x-auto custom-scrollbar"><table class="w-full text-xs sm:text-sm text-right">${th(['القسم', 'المستهدف', 'الفعلي', 'الانحراف', 'الانحراف %'])}<tbody>${appData.departments.map(drow).join('')}</tbody></table></div></div>`;
+        }
+
+        function opsStats(c) {
+            const o = appData.operations || [], S = k => sum(o, r => r[k]);
+            const bedDays = sum(o, (r, i) => 0) + o.reduce((t, r, i) => t + r.beds * (DAYS[i] || 30), 0);
+            const avgBeds = o.length ? sum(o, r => r.beds) / o.length : 0;
+            return { has: o.length > 0, pd: S('patientDays'), adm: S('admissions'), vis: S('visits'), sub: S('claimsSubmitted'), rej: S('claimsRejected'), occ: pct(S('patientDays'), bedDays), alos: S('admissions') ? S('patientDays') / S('admissions') : 0, turn: avgBeds ? S('admissions') / avgBeds : 0, arpob: S('patientDays') ? c.revenue / S('patientDays') : 0, rpv: S('visits') ? c.revenue / S('visits') : 0, rejRate: pct(S('claimsRejected'), S('claimsSubmitted')) };
+        }
+
+        function renderRatios(c) {
+            const G = 'text-emerald-700 bg-emerald-100', W = 'text-amber-700 bg-amber-100', R = 'text-rose-700 bg-rose-100', N = 'text-slate-700 bg-slate-200';
+            const P = (a, b) => pct(a, b).toFixed(1) + '%', D = n => Math.round(n) + ' يوم', X = n => n.toFixed(2);
+            const exp = c.cogs + c.payroll + c.opex, dailyCash = exp / 365, o = opsStats(c);
+            const dio = c.cogs ? c.inv / c.cogs * 365 : 0, dpo = c.cogs ? c.liab / c.cogs * 365 : 0;
+            const grp = [
+                ['الربحية', 'chart', [
+                    ['هامش الربح الإجمالي', 'Gross Profit / Revenue', P(c.gross, c.revenue), N],
+                    ['هامش EBITDA', 'EBITDA / Revenue', P(c.ebitda, c.revenue), pct(c.ebitda, c.revenue) >= 20 ? G : W],
+                    ['هامش الربح التشغيلي', '(EBITDA − Depreciation) / Revenue', P(c.ebitda - c.dep, c.revenue), pct(c.ebitda - c.dep, c.revenue) >= 10 ? G : W],
+                    ['هامش صافي الربح', 'Net Income / Revenue', P(c.net, c.revenue), pct(c.net, c.revenue) >= 10 ? G : pct(c.net, c.revenue) >= 5 ? W : R],
+                    ['العائد على الأصول ROA', 'Net Income / Total Assets', P(c.net, c.assets), pct(c.net, c.assets) >= 5 ? G : W],
+                    ['العائد على الملكية ROE', 'Net Income / Equity', P(c.net, c.equity), pct(c.net, c.equity) >= 10 ? G : W]]],
+                ['هيكل التكلفة', 'receipt', [
+                    ['تكلفة الأدوية والمستلزمات إلى الإيراد', 'COGS / Revenue', P(c.cogs, c.revenue), N],
+                    ['تكلفة العمالة إلى الإيراد', 'Payroll / Revenue', P(c.payroll, c.revenue), pct(c.payroll, c.revenue) <= 40 ? G : W],
+                    ['المصاريف التشغيلية إلى الإيراد', 'Opex / Revenue', P(c.opex, c.revenue), N],
+                    ['الإهلاك إلى الإيراد', 'Depreciation / Revenue', P(c.dep, c.revenue), N],
+                    ['إجمالي التكاليف إلى الإيراد', 'Total Costs / Revenue', P(exp + c.dep, c.revenue), pct(exp + c.dep, c.revenue) <= 90 ? G : W]]],
+                ['السيولة', 'cash', [
+                    ['نسبة التداول', 'Current Assets / Current Liabilities', X(c.currentRatio), c.currentRatio >= 1.5 ? G : W],
+                    ['النسبة السريعة', '(Cash + AR) / Current Liabilities', X(c.quick), c.quick >= 1 ? G : W],
+                    ['نسبة النقدية', 'Cash / Current Liabilities', X(c.liab ? c.cash / c.liab : 0), N],
+                    ['رأس المال العامل', 'Current Assets − Current Liabilities', fmt(c.ca - c.liab) + ' ر.س', c.ca - c.liab > 0 ? G : R],
+                    ['أيام النقدية المتاحة', 'Cash / (Cash Operating Costs / 365)', D(dailyCash ? c.cash / dailyCash : 0), dailyCash && c.cash / dailyCash >= 60 ? G : W]]],
+                ['دورة الإيراد والتحصيل', 'clock', [
+                    ['فترة التحصيل DSO', '(AR / Revenue) × 365', D(c.dso), c.dso <= 60 ? G : c.dso <= 90 ? W : R],
+                    ['معدل دوران الذمم', 'Revenue / AR', X(c.ar ? c.revenue / c.ar : 0) + ' مرة', N],
+                    ['أيام المخزون DIO', '(Inventory / COGS) × 365', D(dio), N],
+                    ['فترة سداد الموردين DPO', '(Payables / COGS) × 365', D(dpo), N],
+                    ['دورة التحويل النقدي', 'DSO + DIO − DPO', D(c.dso + dio - dpo), c.dso + dio - dpo <= 90 ? G : W],
+                    ['الديون الحرجة (+90 يوم)', 'AR > 90 / Total AR Aging', P(c.ar90, c.arAge), c.ar90 === 0 ? G : pct(c.ar90, c.arAge) > 10 ? R : W]]],
+                ['الملاءة والمديونية', 'scale', [
+                    ['الدين إلى الملكية', 'Total Liabilities / Equity', X(c.de), c.de <= 1 ? G : W],
+                    ['نسبة الالتزامات للأصول', 'Liabilities / Assets', P(c.liab, c.assets), N],
+                    ['نسبة الملكية', 'Equity / Assets', P(c.equity, c.assets), N],
+                    ['مضاعف الملكية', 'Assets / Equity', X(c.equity ? c.assets / c.equity : 0), N],
+                    ['معدل دوران الأصول', 'Revenue / Total Assets', X(c.assets ? c.revenue / c.assets : 0) + ' مرة', N]]],
+                ['المؤشرات التشغيلية للمستشفى', 'user', o.has ? [
+                    ['نسبة إشغال الأسرّة', 'Patient Days / (Beds × Days)', o.occ.toFixed(1) + '%', o.occ >= 65 && o.occ <= 85 ? G : W],
+                    ['متوسط مدة الإقامة ALOS', 'Patient Days / Admissions', o.alos.toFixed(1) + ' يوم', N],
+                    ['معدل دوران السرير', 'Admissions / Avg Beds', o.turn.toFixed(1) + ' مرة', N],
+                    ['إيراد اليوم التنويمي (تقريبي)', 'Total Revenue / Patient Days', fmt(o.arpob) + ' ر.س', N],
+                    ['إيراد الزيارة (تقريبي)', 'Total Revenue / Outpatient Visits', fmt(o.rpv) + ' ر.س', N],
+                    ['نسبة رفض المطالبات', 'Rejected Claims / Submitted Claims', o.rejRate.toFixed(1) + '%', o.rejRate <= 5 ? G : o.rejRate <= 10 ? W : R]] : [['لا توجد بيانات تشغيلية', 'أضف ورقة «التشغيل» في ملف الإكسل', '-', N]]]
+            ];
+            document.getElementById('ratios-root').innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">` + grp.map(g => `<div class="bg-white p-5 rounded-2xl border border-slate-200"><h2 class="text-base font-bold mb-4 flex items-center gap-2 border-b border-slate-100 pb-3"><i class="fa-solid fa-${{chart: 'chart-line', receipt: 'receipt', cash: 'sack-dollar', clock: 'clock-rotate-left', scale: 'scale-balanced', user: 'user-doctor'}[g[1]]} text-teal-600"></i>${g[0]}</h2><div class="space-y-3">${g[2].map(r => `<div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center gap-3"><div><span class="block font-bold text-xs text-slate-700">${r[0]}</span><span class="text-[11px] text-slate-500" dir="ltr">${r[1]}</span></div><span class="num text-sm font-extrabold px-3 py-1 rounded-lg whitespace-nowrap ${r[3]}">${r[2]}</span></div>`).join('')}</div></div>`).join('') + `</div>`;
+        }
+
+        function renderStatements(c) {
+            const L = (l, v, o = {}) => `<div class="flex justify-between py-1.5 px-2 ${o.b ? 'font-bold bg-slate-50 rounded' : 'text-slate-600'} ${o.top ? 'border-t mt-1' : ''}"><span>${l}</span><span class="num ${o.neg ? 'text-rose-600' : ''}">${o.neg ? '(' + fmt(v) + ')' : fmt(v)}</span></div>`;
+            const H = t => `<div class="font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded mt-3">${t}</div>`;
+            const ok = Math.abs(c.assets - c.le) <= TOL;
+            document.getElementById('statements-root').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"><h2 class="text-base font-bold mb-4 pb-2 border-b flex justify-between"><span>قائمة الدخل</span><span class="text-xs text-slate-400 font-normal">ر.س</span></h2><div class="text-xs sm:text-sm">
+                ${L('الإيرادات التشغيلية', c.revenue, { b: 1 })}${L('تكلفة الأدوية والمستلزمات', c.cogs, { neg: 1 })}${L('إجمالي الربح', c.gross, { b: 1 })}
+                ${L('الرواتب والبدلات', c.payroll, { neg: 1 })}${L('الإيجار والمصاريف التشغيلية', c.opex, { neg: 1 })}${L('الربح قبل الإهلاك (EBITDA)', c.ebitda, { b: 1 })}
+                ${L('إهلاك الأجهزة والمعدات', c.dep, { neg: 1 })}${L('صافي الربح قبل الزكاة والضرائب', c.net, { b: 1, top: 1 })}</div></div>
+              <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"><h2 class="text-base font-bold mb-4 pb-2 border-b flex justify-between"><span>المركز المالي</span><span class="text-xs text-slate-400 font-normal">حسب الميزان الحالي</span></h2><div class="text-xs sm:text-sm">
+                ${H('الأصول')}${L('النقدية', c.cash)}${L('مديونيات التأمين والعملاء', c.ar)}${L('المخزون', c.inv)}${L('إجمالي الأصول المتداولة', c.ca, { b: 1 })}${L('الأصول الثابتة', c.fa)}${L('إجمالي الأصول', c.assets, { b: 1, top: 1 })}
+                ${H('الالتزامات وحقوق الملكية')}${L('الموردون والدائنون', c.liab)}${L('رأس المال', c.capital)}${L('الأرباح المبقاة', c.retained)}${L('ربح السنة الحالية', c.net)}${L('إجمالي الالتزامات والملكية', c.le, { b: 1, top: 1 })}
+                <div class="mt-3 text-[11px] ${ok ? 'text-emerald-600' : 'text-rose-600'}">${ok ? '✓ الميزانية متوازنة' : '⚠ فرق الميزانية ' + fmt(c.assets - c.le)}</div></div></div></div>`;
+        }
+
+        function renderAudit(c) {
+            const ch = auditChecks(c), bad = ch.filter(x => !x.ok), errs = bad.filter(x => !x.warn);
+            const st = errs.length ? errs.length + ' ملاحظات جوهرية' : bad.length ? 'سليم مع تنبيهات' : 'تم التحقق المحاسبي ✓';
+            const ps = document.getElementById('print-status'); if (ps) ps.innerText = st;
+            document.getElementById('audit-root').innerHTML = `<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+              <h2 class="text-base font-bold mb-1 flex items-center gap-2"><i class="fa-solid fa-robot text-teal-600"></i>التدقيق الآلي</h2>
+              <p class="text-xs text-slate-500 mb-4">${ch.length - bad.length} من ${ch.length} فحوصات ناجحة · ${st}</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">${ch.map(x => { const k = x.ok ? 'emerald' : x.warn ? 'amber' : 'rose'; return `<div class="p-3 rounded-xl border border-${k}-200 bg-${k}-50/60 flex gap-3"><i class="fa-solid ${x.ok ? 'fa-circle-check' : 'fa-triangle-exclamation'} text-${k}-600 text-lg mt-0.5"></i><div><h4 class="font-bold text-xs">${x.t}</h4><p class="text-[11px] text-slate-600 mt-1 num">${x.d}</p></div></div>`; }).join('')}</div></div>`;
+        }
+
+        function filterTrialBalance() {
+            const query = document.getElementById('trial-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#table-trial-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // ==================== CHART.JS INTEGRATION ====================
+        function initCharts(c) {
+            Object.values(chartsObj).forEach(ch => ch.destroy()); chartsObj = {};
+            Chart.defaults.font.family = 'IBM Plex Sans Arabic, sans-serif'; Chart.defaults.color = '#4d5c58'; Chart.defaults.plugins.legend.labels.usePointStyle = true;
+            const M = v => (v / 1e6).toFixed(1) + 'M';
+            const tip = { callbacks: { label: x => ` ${x.dataset.label ? x.dataset.label + ': ' : ''}${fmt(x.raw)} ر.س` } };
+            const yAx = { ticks: { callback: M }, grid: { color: '#eaeeed' } };
+            const pieTip = { callbacks: { label: x => { const t = x.dataset.data.reduce((a, b) => a + b, 0); return ` ${x.label}: ${fmt(x.raw)} (${pct(x.raw, t).toFixed(1)}%)`; } } };
+            const mk = (id, cfg) => { const el = document.getElementById(id); if (el) chartsObj[id] = new Chart(el.getContext('2d'), cfg); };
+            const base = { responsive: true, maintainAspectRatio: false };
+            const mr = appData.monthlyRevenue;
+
+            mk('chartRevenueMonthly', { data: { labels: mr.map(d => d.month), datasets: [
+                { type: 'bar', label: 'الإيراد الفعلي', data: mr.map(d => d.actual), backgroundColor: '#1f7a4d', borderRadius: 4 },
+                { type: 'bar', label: 'المستهدف', data: mr.map(d => d.budget), backgroundColor: '#c3cdca', borderRadius: 4 },
+                { type: 'bar', label: 'المصروفات', data: mr.map(d => d.expense), backgroundColor: '#c2453b', borderRadius: 4 },
+                { type: 'line', label: 'صافي الشهر', data: mr.map(d => d.actual - d.expense), borderColor: '#14211f', backgroundColor: '#14211f', tension: .3, pointRadius: 3 }
+            ] }, options: { ...base, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom' }, tooltip: tip }, scales: { y: yAx } } });
+
+            const src = appData.revenueSources || DEFAULTS.revenueSources;
+            mk('chartRevenueSources', { type: 'doughnut', data: { labels: src.map(x => x.name), datasets: [{ data: src.map(x => x.amount), backgroundColor: ['#0f5c55', '#3b6ea5', '#c8891a'] }] }, options: { ...base, cutout: '62%', plugins: { legend: { position: 'bottom' }, tooltip: pieTip } } });
+
+            mk('chartARAging', { type: 'doughnut', data: { labels: ['أقل من 30 يوم', '31-60 يوم', '61-90 يوم', 'أكثر من 90 يوم'], datasets: [{ data: ['current', 'm30', 'm60', 'm90'].map(k => sum(appData.insuranceAR, i => i[k])), backgroundColor: ['#1f7a4d', '#3b6ea5', '#c8891a', '#c2453b'] }] }, options: { ...base, cutout: '58%', plugins: { legend: { position: 'bottom' }, tooltip: pieTip } } });
+
+            const dp = appData.departments;
+            mk('chartDeptProfit', { type: 'bar', data: { labels: dp.map(d => d.name), datasets: [
+                { label: 'الإيراد', data: dp.map(d => d.revenue), backgroundColor: '#0f5c55', borderRadius: 4 },
+                { label: 'صافي ربح القسم', data: dp.map(d => d.revenue - d.directCost - d.overhead), backgroundColor: '#1f7a4d', borderRadius: 4 }
+            ] }, options: { ...base, plugins: { legend: { position: 'bottom' }, tooltip: tip }, scales: { y: yAx } } });
+
+            const eb = mr.map(m => m.expBudget || 0);
+            mk('chartBudgetVar', { data: { labels: mr.map(d => d.month), datasets: [
+                { type: 'bar', label: 'انحراف الإيراد', data: mr.map(d => d.actual - d.budget), backgroundColor: '#1f7a4d', borderRadius: 3 },
+                { type: 'bar', label: 'وفر المصروفات', data: mr.map((d, i) => eb[i] - d.expense), backgroundColor: '#3b6ea5', borderRadius: 3 },
+                { type: 'line', label: 'أثر الانحراف على الربح', data: mr.map((d, i) => (d.actual - d.budget) + (eb[i] - d.expense)), borderColor: '#14211f', backgroundColor: '#14211f', tension: .3, pointRadius: 3 }
+            ] }, options: { ...base, plugins: { legend: { position: 'bottom' }, tooltip: tip }, scales: { y: yAx } } });
+            let ca = 0, cb = 0;
+            mk('chartBudgetCum', { type: 'line', data: { labels: mr.map(d => d.month), datasets: [
+                { label: 'الفعلي', data: mr.map(d => ca += d.actual - d.expense), borderColor: '#1f7a4d', backgroundColor: '#1f7a4d', tension: .25 },
+                { label: 'المستهدف', data: mr.map((d, i) => cb += d.budget - eb[i]), borderColor: '#93a29e', backgroundColor: '#93a29e', borderDash: [6, 4], tension: .25 }
+            ] }, options: { ...base, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'bottom' }, tooltip: tip }, scales: { y: yAx } } });
+
+            // true floating waterfall
+            const st = appData.cashflowSteps, labels = [], data = [], colors = [], amts = [];
+            let run = 0;
+            st.forEach((s, i) => {
+                const from = i === 0 ? 0 : run; run = i === 0 ? s.amount : run + s.amount;
+                data.push([Math.min(from, run), Math.max(from, run)]); amts.push(s.amount); labels.push(s.title);
+                colors.push(i === 0 ? '#6b7b77' : s.amount >= 0 ? '#1f7a4d' : '#c2453b');
+            });
+            data.push([0, run]); amts.push(run); labels.push('الرصيد الختامي'); colors.push('#14211f');
+            mk('chartCashFlow', { type: 'bar', data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+                options: { ...base, plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => ` ${amts[x.dataIndex] > 0 ? '+' : ''}${fmt(amts[x.dataIndex])} ر.س` } } }, scales: { y: yAx } } });
+        }
+
+        // ==================== EXCEL IMPORT & EXPORT (SheetJS) ====================
+        // Sheet names and Arabic column headers (match the Excel template file)
+        const IMPORT_SCHEMA = {
+            monthlyRevenue: { sheet: 'الشهري', text: ['month'], nums: ['actual', 'budget', 'expense', 'expBudget'], labels: { month: 'الشهر', actual: 'الإيراد الفعلي', budget: 'الإيراد المستهدف', expense: 'المصروفات الفعلية', expBudget: 'المصروفات المستهدفة' } },
+            revenueSources: { sheet: 'مصادر الإيراد', text: ['name'], nums: ['amount'], labels: { name: 'المصدر', amount: 'المبلغ' } },
+            insuranceAR: { sheet: 'التأمين', text: ['provider'], nums: ['current', 'm30', 'm60', 'm90'], labels: { provider: 'جهة التأمين', current: 'أقل من 30 يوم', m30: '31-60 يوم', m60: '61-90 يوم', m90: 'أكثر من 90 يوم' } },
+            departments: { sheet: 'الأقسام', text: ['name'], nums: ['revenue', 'directCost', 'overhead', 'budget'], labels: { name: 'القسم', revenue: 'الإيراد', directCost: 'التكاليف المباشرة', overhead: 'التكاليف غير المباشرة', budget: 'الإيراد المستهدف' } },
+            trialBalance: { sheet: 'ميزان المراجعة', text: ['code', 'name'], nums: ['debit', 'credit'], labels: { code: 'رمز الحساب', name: 'اسم الحساب', debit: 'مدين', credit: 'دائن' } },
+            cashflowSteps: { sheet: 'التدفق النقدي', text: ['title'], nums: ['amount'], labels: { title: 'البند', amount: 'المبلغ (موجب = دخول، سالب = خروج)' } },
+            operations: { sheet: 'التشغيل', text: ['month'], nums: ['beds', 'patientDays', 'admissions', 'visits', 'claimsSubmitted', 'claimsRejected'], labels: { month: 'الشهر', beds: 'عدد الأسرة', patientDays: 'أيام التنويم', admissions: 'عدد التنويمات', visits: 'زيارات العيادات', claimsSubmitted: 'قيمة المطالبات المقدمة', claimsRejected: 'قيمة المطالبات المرفوضة' } }
+        };
+
+        function esc(s) {
+            return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function toNum(v) {
+            if (typeof v === 'number') return isFinite(v) ? v : NaN;
+            if (v === null || v === undefined || String(v).trim() === '') return 0;
+            const cleaned = String(v)
+                .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+                .replace(/[,،\s]/g, '');
+            const n = Number(cleaned);
+            return isFinite(n) ? n : NaN;
+        }
+
+        // Returns { rows } on success or { error } on failure
+        function parseImportSheet(ws, schema) {
+            const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
+            if (!raw.length) return { error: 'الورقة فارغة' };
+
+            const rows = raw.map(r => {
+                const o = {};
+                Object.keys(r).forEach(k => { o[String(k).trim()] = r[k]; });
+                return o;
+            });
+
+            const required = schema.text.concat(schema.nums);
+            const has = c => c in rows[0] || schema.labels[c] in rows[0];
+            const get = (r, c) => (c in r ? r[c] : r[schema.labels[c]]);
+            const missing = required.filter(c => !has(c)).map(c => schema.labels[c]);
+            if (missing.length) return { error: 'أعمدة ناقصة: ' + missing.join('، ') };
+
+            const out = [];
+            for (let i = 0; i < rows.length; i++) {
+                const r = rows[i];
+                const item = {};
+                schema.text.forEach(c => { item[c] = String(get(r, c) ?? '').trim(); });
+                if (schema.text.every(c => item[c] === '')) continue; // skip blank rows
+                for (const c of schema.nums) {
+                    const n = toNum(get(r, c));
+                    if (Number.isNaN(n)) return { error: 'قيمة غير رقمية في العمود "' + schema.labels[c] + '" (صف ' + (i + 2) + ')' };
+                    item[c] = n;
+                }
+                out.push(item);
+            }
+            if (!out.length) return { error: 'لا توجد بيانات صالحة' };
+            return { rows: out };
+        }
+
+        function importExcelData(event) {
+            const input = event.target;
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onerror = function() {
+                showToast('تعذّر قراءة الملف', 'error');
+                input.value = '';
+            };
+            reader.onload = function(e) {
+                try {
+                    const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const loaded = [];
+                    const problems = [];
+                    const staged = {};
+
+                    Object.keys(IMPORT_SCHEMA).forEach(key => {
+                        const schema = IMPORT_SCHEMA[key];
+                        const ws = workbook.Sheets[schema.sheet];
+                        if (!ws) return; // sheet not present in file, keep current data
+                        const res = parseImportSheet(ws, schema);
+                        if (res.error) problems.push('«' + schema.sheet + '»: ' + res.error);
+                        else { staged[key] = res.rows; loaded.push(schema.sheet); }
+                    });
+
+                    if (!loaded.length) {
+                        const msg = problems.length
+                            ? 'لم يتم الاستيراد. ' + problems.join(' | ')
+                            : 'لم يتم العثور على أي ورقة مطابقة للقالب الموحد';
+                        showToast(msg, 'error');
+                        return;
+                    }
+
+                    Object.assign(appData, staged);
+                    appData.importedSheets = Array.from(new Set((appData.importedSheets || []).concat(Object.keys(staged))));
+
+                    saveCurrentStateToDB(true);
+                    renderAll();
+
+                    showToast('تم استيراد: ' + loaded.join('، '), 'success');
+                    if (problems.length) showToast('تم تخطي: ' + problems.join(' | '), 'error');
+
+                    if (staged.trialBalance) {
+                        const d = staged.trialBalance.reduce((a, r) => a + r.debit, 0);
+                        const c = staged.trialBalance.reduce((a, r) => a + r.credit, 0);
+                        if (Math.abs(d - c) > 0.5) {
+                            showToast('تنبيه: ميزان المراجعة غير متوازن (مدين ' + d.toLocaleString() + ' / دائن ' + c.toLocaleString() + ')', 'error');
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('خطأ في تنسيق ملف الإكسل المرفوع', 'error');
+                } finally {
+                    input.value = ''; // allow re-selecting the same file
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportStandardTemplate() {
+            const wb = XLSX.utils.book_new();
+            Object.keys(IMPORT_SCHEMA).forEach(k => {
+                const sc = IMPORT_SCHEMA[k];
+                const rows = (appData[k] || []).map(r => { const o = {}; sc.text.concat(sc.nums).forEach(c => { o[sc.labels[c]] = r[c]; }); return o; });
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), sc.sheet);
+            });
+            XLSX.writeFile(wb, 'MEDFIN_Standard_Template.xlsx');
+            showToast('تم تنزيل ملف الإكسل ببياناتك الحالية', 'success');
+        }
+
+        // ==================== iOS PRINT & PDF EXPORT ====================
+        function openPrintModal() {
+            document.getElementById('print-modal').classList.remove('hidden');
+        }
+
+        function closePrintModal() {
+            document.getElementById('print-modal').classList.add('hidden');
+        }
+
+        function triggerIOSPrint() {
+            closePrintModal();
+            // Reveal all tabs for global PDF export
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(t => t.classList.remove('hidden'));
+
+            setTimeout(() => {
+                Object.values(chartsObj).forEach(ch => ch.resize());
+                window.print();
+                // Restore tab view after print dialog closes
+                switchTab('revenue');
+                Object.values(chartsObj).forEach(ch => ch.resize());
+            }, 300);
+        }
+
+        function downloadDirectPDF() {
+            closePrintModal();
+            const element = document.getElementById('printable-area');
+            const opt = {
+                margin: 0.3,
+                filename: 'MEDFIN_Financial_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save().then(() => {
+                showToast('تم تحميل التقرير بصيغة PDF بنجاح 📄', 'success');
+            });
+        }
+
+        // ==================== NAVIGATION & TOASTS ====================
+        const TAB_INFO = {
+            revenue: ['الإيرادات والأرباح', 'الفعلي مقابل المستهدف والمصروفات خلال السنة'],
+            budget: ['الموازنة والانحرافات', 'الفعلي مقابل المستهدف شهرياً وحسب القسم'],
+            insurance: ['مديونيات التأمين', 'أعمار الديون حسب جهة التأمين'],
+            departments: ['ربحية الأقسام', 'الإيراد والتكلفة وهامش الربح لكل قسم'],
+            cashflow: ['حركة السيولة', 'من الرصيد الافتتاحي إلى الرصيد الختامي'],
+            trial: ['ميزان المراجعة', 'أرصدة الحسابات المدينة والدائنة'],
+            ratios: ['النسب المالية', 'الربحية والتكلفة والسيولة والتحصيل والتشغيل'],
+            statements: ['القوائم المالية', 'قائمة الدخل والمركز المالي من الميزان'],
+            audit: ['التدقيق الآلي', 'مطابقة المصادر ببعضها'],
+            database: ['إدارة البيانات', 'الحفظ المحلي والنسخ الاحتياطي']
+        };
+        function openNav() { document.getElementById('sidebar').classList.add('open'); document.getElementById('scrim').classList.add('open'); }
+        function closeNav() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('scrim').classList.remove('open'); }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+            const sec = document.getElementById('section-' + tabId); if (sec) sec.classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => { const on = b.id === 'tab-' + tabId; b.classList.toggle('active', on); b.setAttribute('aria-current', on ? 'page' : 'false'); });
+            const info = TAB_INFO[tabId] || TAB_INFO.revenue;
+            document.getElementById('page-title').innerText = info[0]; document.getElementById('page-sub').innerText = info[1];
+            try { history.replaceState(null, '', '#' + tabId); } catch (e) {}
+            closeNav(); window.scrollTo(0, 0);
+            requestAnimationFrame(() => Object.values(chartsObj).forEach(ch => ch.resize()));
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded-lg shadow-lg text-xs font-semibold text-white flex items-center gap-2 bg-slate-900 border-r-4 ${type === 'success' ? 'border-emerald-400' : 'border-rose-400'} transition-all duration-300`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Initial Launch
+        window.onload = function() {
+            document.getElementById('print-date').innerText = new Date().toISOString().split('T')[0];
+            initDatabase();
+            renderAll();
+            const h = location.hash.slice(1); switchTab(TAB_INFO[h] ? h : 'revenue');
+        };
+    </script>
+</body>
+</html>
